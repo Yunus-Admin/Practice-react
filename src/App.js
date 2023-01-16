@@ -33,7 +33,8 @@ function App() {
 
   const sortPosts = (sort) => {
     setSelectedSort(sort);
-    console.log(sort);
+    //разворачиваем массив в новый массив и сортируем, мутируем копию массива нельзя изменять состояния на прямую
+    setPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])));
   };
 
   return (
