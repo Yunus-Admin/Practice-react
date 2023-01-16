@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -23,8 +23,9 @@ function App() {
   const [selectedSort, setSelectedSort] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  //если оставить так то когда пишем в input то это функция каждый раз вызывается и сортируем массив
-  const getSortedPosts = () => {
+  //callback будет вызван только в это м случае если массив зависимостей был изменен передаем его useMemo() вторым
+  // аргументом, sortedPosts лежит ещё один отсартированный массив и при этом массив post никак неизменяется
+  const sortedPosts = useMemo(() => {
     console.log("Working getSortedPosts");
     if (selectedSort) {
       //разворачиваем массив в новый массив и сортируем, мутируем копию массива нельзя изменять состояния на прямую
@@ -33,9 +34,15 @@ function App() {
       );
     }
     return posts;
-  };
+  }, [selectedSort, posts]);
 
-  const sortedPosts = getSortedPosts();
+  //в массиве зависимостей поисковая строка и отсартированный массив, будем реагировать на изменение этих зависимостей
+  const sortedAndSearchPosts = useMemo(() => {
+    //по поисковой строке фильтруем массив
+    return sortedPosts.filter((post) =>
+      post.title.toLowerCase().includes(searchQuery)
+    );
+  }, [searchQuery, sortedPosts]);
 
   const createPost = (newPost) => {
     //меняем состояние разворачиваем массив и добавляем в конец новый
@@ -73,10 +80,10 @@ function App() {
         />
       </>
 
-      {posts.length !== 0 ? (
+      {sortedAndSearchPosts.length !== 0 ? (
         <PostList
           remove={removePost}
-          posts={sortedPosts}
+          posts={sortedAndSearchPosts}
           title={"Посты про JS"}
         />
       ) : (
