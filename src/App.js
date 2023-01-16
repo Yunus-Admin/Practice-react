@@ -58,15 +58,11 @@ function App() {
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
 
-      {sortedAndSearchPosts.length !== 0 ? (
-        <PostList
-          remove={removePost}
-          posts={sortedAndSearchPosts}
-          title={"Посты про JS"}
-        />
-      ) : (
-        <h1 style={{ textAlign: "center" }}>Посты не найдены</h1>
-      )}
+      <PostList
+        remove={removePost}
+        posts={sortedAndSearchPosts}
+        title={"Посты про JS"}
+      />
     </div>
   );
 }
