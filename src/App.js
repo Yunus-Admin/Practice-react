@@ -3,6 +3,7 @@ import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import MySelect from "./components/UI/select/MySelect";
+import MyInput from "./components/UI/input/MyInput";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -20,6 +21,21 @@ function App() {
   ]);
 
   const [selectedSort, setSelectedSort] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  //если оставить так то когда пишем в input то это функция каждый раз вызывается и сортируем массив
+  const getSortedPosts = () => {
+    console.log("Working getSortedPosts");
+    if (selectedSort) {
+      //разворачиваем массив в новый массив и сортируем, мутируем копию массива нельзя изменять состояния на прямую
+      return [...posts].sort((a, b) =>
+        a[selectedSort].localeCompare(b[selectedSort])
+      );
+    }
+    return posts;
+  };
+
+  const sortedPosts = getSortedPosts();
 
   const createPost = (newPost) => {
     //меняем состояние разворачиваем массив и добавляем в конец новый
@@ -33,8 +49,6 @@ function App() {
 
   const sortPosts = (sort) => {
     setSelectedSort(sort);
-    //разворачиваем массив в новый массив и сортируем, мутируем копию массива нельзя изменять состояния на прямую
-    setPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])));
   };
 
   return (
@@ -42,6 +56,12 @@ function App() {
       <PostForm create={createPost} />
       <hr style={{ margin: "15px 0" }} />
       <>
+        <MyInput
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Поиск..."
+        />
+
         <MySelect
           value={selectedSort}
           onChange={sortPosts}
@@ -54,7 +74,11 @@ function App() {
       </>
 
       {posts.length !== 0 ? (
-        <PostList remove={removePost} posts={posts} title={"Посты про JS"} />
+        <PostList
+          remove={removePost}
+          posts={sortedPosts}
+          title={"Посты про JS"}
+        />
       ) : (
         <h1 style={{ textAlign: "center" }}>Посты не найдены</h1>
       )}
