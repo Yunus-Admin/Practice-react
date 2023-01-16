@@ -19,33 +19,28 @@ function App() {
     },
   ]);
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  //состояние по умол объект с пустыми полями
+  const [post, setPost] = useState({ title: "", body: "" });
 
   const addNewPost = (e) => {
     e.preventDefault();
-    const newPost = {
-      id: Date.now(),
-      title,
-      body,
-    };
-    setPosts([...posts, newPost]);
-    setTitle("");
-    setBody("");
+    //меняем состояние и тут в наш массив с объектами записываем то что ввёл юзер
+    setPosts([...posts, { ...post, id: Date.now() }]);
+    setPost({ title: "", body: "" }); //тут очищаем инпуты
   };
 
   return (
     <div className="App">
       <form>
         <MyInput
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={post.title} //разворачиваем post и тут перезаписываем состояние с пустого title на что ввёл юзер
+          onChange={(e) => setPost({ ...post, title: e.target.value })}
           type="text"
           placeholder="Название Поста"
         />
         <MyInput
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
+          value={post.body} //разворачиваем post и так же перезаписываем body
+          onChange={(e) => setPost({ ...post, body: e.target.value })}
           type="text"
           placeholder="Описание Поста"
         />
