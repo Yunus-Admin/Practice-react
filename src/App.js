@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
-import Mybutton from "./components/UI/button/Mybutton";
-import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/PostForm";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -19,33 +18,14 @@ function App() {
     },
   ]);
 
-  //состояние по умол объект с пустыми полями
-  const [post, setPost] = useState({ title: "", body: "" });
-
-  const addNewPost = (e) => {
-    e.preventDefault();
-    //меняем состояние и тут в наш массив с объектами записываем то что ввёл юзер
-    setPosts([...posts, { ...post, id: Date.now() }]);
-    setPost({ title: "", body: "" }); //тут очищаем инпуты
+  const createPost = (newPost) => {
+    //меняем состояние разворачиваем массив и добавляем в конец новый
+    setPosts([...posts, newPost]);
   };
 
   return (
     <div className="App">
-      <form>
-        <MyInput
-          value={post.title} //разворачиваем post и тут перезаписываем состояние с пустого title на что ввёл юзер
-          onChange={(e) => setPost({ ...post, title: e.target.value })}
-          type="text"
-          placeholder="Название Поста"
-        />
-        <MyInput
-          value={post.body} //разворачиваем post и так же перезаписываем body
-          onChange={(e) => setPost({ ...post, body: e.target.value })}
-          type="text"
-          placeholder="Описание Поста"
-        />
-        <Mybutton onClick={addNewPost}>Создать пост</Mybutton>
-      </form>
+      <PostForm create={createPost} />
       <PostList posts={posts} title={"Посты про JS"} />
     </div>
   );
