@@ -9,16 +9,21 @@ import { usePosts } from "./hooks/usePost";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/loader/Loader";
 import { useFetching } from "./hooks/useFetching";
+import { getPageCount } from "./utils/pages";
 
 function App() {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
-
+  const [totalCount, setTotalCount] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [totalPage, setTotalPage] = useState(1);
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
-    const response = await PostService.getAll();
+    const response = await PostService.getAll(limit, totalPage);
     setPosts(response.data);
+    const totalCount = response.headers["x-total-count"];
+    setTotalPage(getPageCount(totalCount, limit));
   });
 
   useEffect(() => {
