@@ -15,9 +15,10 @@ function App() {
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
+
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    const response = await PostService.getAll();
+    setPosts(response.data);
   });
 
   useEffect(() => {
