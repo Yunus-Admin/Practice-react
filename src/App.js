@@ -10,6 +10,7 @@ import PostService from "./API/PostService";
 import Loader from "./components/UI/loader/Loader";
 import { useFetching } from "./hooks/useFetching";
 import { getPageCount } from "./utils/pages";
+import { usePagination } from "./hooks/usePagination";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -25,6 +26,8 @@ function App() {
     const totalCount = response.headers["x-total-count"];
     setTotalPages(getPageCount(totalCount, limit));
   });
+
+  let pagesArray = usePagination(totalPages);
 
   useEffect(() => {
     fetchPosts();
