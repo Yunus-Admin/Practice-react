@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -8,28 +8,25 @@ import Mybutton from "./components/UI/button/Mybutton";
 import { usePosts } from "./hooks/usePost";
 
 function App() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "Javascript", body: "Javascript - язык программирования" },
-    {
-      id: 2,
-      title: "Php",
-      body: "Php - язык программирования",
-    },
-    {
-      id: 3,
-      title: "Python",
-      body: "Python - язык программирования",
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
 
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   const createPost = (newPost) => {
     //меняем состояние разворачиваем массив и добавляем в конец новый
     setPosts([...posts, newPost]);
     setModal(false);
+  };
+
+  const fetchPosts = async () => {
+    const posts = await fetch("https://jsonplaceholder.typicode.com/posts");
+    setPosts(await posts.json());
   };
 
   //получаем post из дочерного компонента
@@ -39,9 +36,7 @@ function App() {
 
   return (
     <div className="App">
-      <Mybutton style={{ marginTop: "30px" }} onClick={() => setModal(true)}>
-        Создать пользователя
-      </Mybutton>
+      <Mybutton onClick={() => setModal(true)}>Создать пользователя</Mybutton>
       <MyModal visible={modal} setVisible={setModal}>
         <PostForm create={createPost} />
       </MyModal>
