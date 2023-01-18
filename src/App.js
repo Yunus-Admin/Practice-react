@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
@@ -16,14 +16,14 @@ function App() {
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
-    const response = await PostService.getAll(limit, totalPage);
+    const response = await PostService.getAll(limit, page);
     setPosts(response.data);
     const totalCount = response.headers["x-total-count"];
-    setTotalPage(getPageCount(totalCount, limit));
+    setTotalPages(getPageCount(totalCount, limit));
   });
 
   useEffect(() => {
